@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" type="text/css" href="../styles.css" />
+    <title>Your Local Time</title>
+    <style>
+      body {
+        background-color: #212121;
+        color: #fff;
+      }
+      .center {
+        display: flex;
+        height: 100vh;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      .clock {
+        font-size: 80px;
+        font-weight: bold;
+        color: #00ff88;
+        text-shadow: 0 0 10px #00ff88;
+        font-family: "Courier New", monospace;
+        letter-spacing: 5px;
+      }
+
+      .clock-container {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 40px 60px;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        text-align: center;
+      }
+      .date {
+        font-size: 24px;
+        color: #ffffff;
+        margin-top: 20px;
+        text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="/" aria-current="page">Home</a>
+    </nav>
+    <div class="center">
+      <div id="banner"><span>Your local time</span></div>
+      <div id="clock" class="clock">00:00:00</div>
+      <div id="date" class="date">Loading...</div>
+    </div>
+    <script src="digitalClock.js"></script>
+  </body>
+</html>

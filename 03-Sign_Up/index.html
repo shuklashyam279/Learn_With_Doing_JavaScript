@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up Form</title>
+  </head>
+  <body>
+    <script>
+      function createSignupForm() {
+        // --- 1. Style Injection ---
+        // Inject CSS into the head for better separation of concerns.
+        const style = document.createElement("style");
+        style.textContent = `
+        .signup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            min-height: 100vh; /* Use min-height for better mobile compatibility */
+            margin: 0;
+            padding: 20px; /* Add padding to prevent form from touching screen edges */
+            box-sizing: border-box;
+        }
+        #signupForm {
+            max-width: 342px; /* Set a max-width for responsiveness */
+            width: 100%;      /* Allow form to shrink on smaller screens */
+            padding: 20px 25px;
+            border-radius: 20px;
+            border: solid 3px #dfe1e6;
+            background-color: #fff;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .signup-logo {
+            /* The red circle with the logo */
+            width: 50px; height: 50px; border-radius: 50%;
+            background-color: #d9232d; color: white;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; font-size: 30px;
+        }
+        .signup-logo img {
+            width: 30px;
+            height: 30px;
+        }
+        .signup-title {
+            margin: 0 0 10px 0; font-size: 28px; font-weight: bold;
+        }
+        .signup-subtitle {
+            color: #606770; margin-bottom: 30px; font-size: 14px;
+        }
+        .input-group {
+            position: relative; margin-bottom: 5px; /* Reduced margin */
+            text-align: left; /* Align placeholder text to the left */
+        }
+        .input-group input {
+            /* Styling for all input boxes */
+            width: 100%;
+            padding: 12px 15px; /* Simplified padding */
+            border: none;
+            border-bottom: 1px solid #ccc;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .input-group input:focus {
+            /* Highlight the bottom border when a user clicks into an input */
+            outline: none;
+            border-bottom-color: #3b5998;
+        }
+        /* Removed password-toggle styles as icons are not used */
+        .name-container {
+            display: flex; gap: 15px;
+        }
+        .name-container .input-group {
+             flex: 1; /* Allow fields to share space equally */
+        }
+        .error-message {
+            /* Styling for validation error messages */
+            color: #d9232d;
+            font-size: 12px;
+            text-align: left;
+            height: 15px; /* Reserve space to prevent layout shifts */
+        }
+        .signup-button {
+            width: 100%; padding: 12px; border: none;
+            border-radius: 8px; background-color: #3b5998;
+            color: white; font-size: 16px; font-weight: bold;
+            cursor: pointer; margin-top: 20px;
+        }
+        .signup-button:hover {
+            background-color: #324b80;
+        }
+    `;
+        document.head.appendChild(style);
+
+        // --- 2. DOM Element Creation ---
+        const container = document.createElement("div");
+        container.className = "signup-container";
+
+        const form = document.createElement("form");
+        form.id = "signupForm";
+
+        // Helper to create a standard input field group
+        const createInputGroup = (type, id, placeholder) => {
+          const group = document.createElement("div");
+          group.className = "input-group";
+
+          const input = document.createElement("input");
+          input.type = type;
+          input.id = id;
+          input.name = id;
+          input.placeholder = placeholder;
+          group.appendChild(input);
+          return group;
+        };
+
+        const createErrorElement = (id) => {
+          const error = document.createElement("div");
+          error.className = "error-message";
+          error.id = `${id}-error`;
+          return error;
+        };
+
+        // Form Header
+        form.innerHTML = `
+        <div class="signup-logo">
+            <img src="https://i.ibb.co/LdC1mSg/indian-express-logo.png" alt="Logo">
+        </div>
+        <h2 class="signup-title">SignUp</h2>
+        <p class="signup-subtitle">Please enter the OTP sent to below mentioned email/mobile for varification</p>
+    `;
+
+        form.appendChild(
+          createInputGroup("email", "email", "example.@indianexpress.com")
+        );
+        form.appendChild(createErrorElement("email"));
+
+        // Name Fields
+        const nameContainer = document.createElement("div");
+        nameContainer.className = "name-container";
+        nameContainer.appendChild(
+          createInputGroup("text", "firstname", "First Name")
+        );
+        // Add error message containers inside the name container for proper layout
+        const firstNameError = createErrorElement("firstname");
+        const lastNameError = createErrorElement("lastname");
+
+        nameContainer.appendChild(
+          createInputGroup("text", "lastname", "Last Name")
+        );
+        form.appendChild(nameContainer);
+
+        // Create a container for name error messages to keep them aligned
+        const nameErrorContainer = document.createElement("div");
+        nameErrorContainer.className = "name-container"; // Use same class for alignment
+        nameErrorContainer.innerHTML = `<div class="input-group">${firstNameError.outerHTML}</div><div class="input-group">${lastNameError.outerHTML}</div>`;
+        form.appendChild(nameErrorContainer);
+
+        // Password Field
+        form.appendChild(
+          createInputGroup("password", "password", "Set Password")
+        );
+        form.appendChild(createErrorElement("password"));
+
+        // Submit Button
+        const submitButton = document.createElement("button");
+        submitButton.type = "submit";
+        submitButton.className = "signup-button";
+        submitButton.innerText = "SignUp";
+        form.appendChild(submitButton);
+
+        container.appendChild(form);
+        document.body.appendChild(container);
+
+        // --- 3. Validation and Event Handling ---
+        const fields = {
+          firstname: form.querySelector("#firstname"),
+          lastname: form.querySelector("#lastname"),
+          email: form.querySelector("#email"),
+          password: form.querySelector("#password"),
+        };
+
+        // The email will now be pre-filled from sessionStorage
+
+        const showError = (fieldId, message) => {
+          const errorEl = form.querySelector(`#${fieldId}-error`);
+          if (errorEl) errorEl.textContent = message;
+        };
+
+        const clearErrors = () => {
+          form
+            .querySelectorAll(".error-message")
+            .forEach((el) => (el.textContent = ""));
+        };
+
+        const validateForm = () => {
+          clearErrors();
+          let isValid = true;
+          // A more robust regex to check for a valid email format.
+          const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+          if (!fields.firstname.value.trim()) {
+            showError("firstname", "First name is required.");
+            isValid = false;
+          }
+          if (!fields.lastname.value.trim()) {
+            showError("lastname", "Last name is required.");
+            isValid = false;
+          }
+          // Validate the email format using the regex.
+          if (!emailRegex.test(fields.email.value.trim())) {
+            showError("email", "Please enter a valid email.");
+            isValid = false;
+          }
+          if (!fields.password.value.trim()) {
+            showError("password", "Password is required.");
+            isValid = false;
+          }
+          return isValid;
+        };
+
+        // This is the main event listener for the form submission.
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          if (validateForm()) {
+            const userData = {
+              firstname: fields.firstname.value.trim(),
+              lastname: fields.lastname.value.trim(),
+              email: fields.email.value.trim(),
+              password: fields.password.value.trim(),
+            };
+            // Save the user data to sessionStorage to make pre-filling work on refresh.
+            sessionStorage.setItem("userData", JSON.stringify(userData));
+            alert("Registration successful!");
+          }
+        });
+
+        // --- 4. Pre-fill form from sessionStorage on page load/refresh ---
+        const prefillForm = () => {
+          // Retrieve data from sessionStorage.
+          const savedData = sessionStorage.getItem("userData");
+          if (savedData) {
+            const userData = JSON.parse(savedData);
+            fields.firstname.value = userData.firstname || "";
+            fields.lastname.value = userData.lastname || "";
+            fields.password.value = userData.password || "";
+            fields.email.value = userData.email || ""; // Set email from sessionStorage
+          }
+        };
+
+        prefillForm();
+      }
+
+      // --- 5. Initial Execution ---
+      // Ensure the DOM is ready before creating the form.
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", createSignupForm);
+      } else {
+        createSignupForm();
+      }
+    </script>
+  </body>
+</html>
